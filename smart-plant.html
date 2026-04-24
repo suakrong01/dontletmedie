@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌱 Smart Plant</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #87CEEB 0%, #b0e0ff 40%, #c8f0a0 70%, #90c45a 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* clouds */
+  .cloud {
+    position: fixed;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.85;
+    animation: floatCloud linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+  }
+  .cloud1 { width:120px; height:40px; top:8%; animation-duration:18s; animation-delay:-5s; }
+  .cloud1::before { width:60px; height:60px; top:-30px; left:20px; }
+  .cloud1::after { width:40px; height:40px; top:-20px; left:60px; }
+  .cloud2 { width:80px; height:28px; top:18%; animation-duration:24s; animation-delay:-12s; }
+  .cloud2::before { width:40px; height:40px; top:-20px; left:10px; }
+  .cloud2::after { width:30px; height:30px; top:-15px; left:40px; }
+  .cloud3 { width:100px; height:35px; top:5%; animation-duration:20s; animation-delay:-8s; }
+  .cloud3::before { width:50px; height:50px; top:-25px; left:15px; }
+  .cloud3::after { width:35px; height:35px; top:-18px; left:55px; }
+  @keyframes floatCloud {
+    from { left: -150px; }
+    to { left: 110%; }
+  }
+
+  /* sun */
+  .sun {
+    position: fixed;
+    top: 30px; right: 60px;
+    width: 70px; height: 70px;
+    background: #FFD700;
+    border-radius: 50%;
+    box-shadow: 0 0 30px #FFD700, 0 0 60px #FFA500;
+    animation: sunPulse 3s ease-in-out infinite;
+  }
+  @keyframes sunPulse {
+    0%,100% { box-shadow: 0 0 30px #FFD700, 0 0 60px #FFA500; }
+    50% { box-shadow: 0 0 50px #FFD700, 0 0 90px #FFA500; }
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #2d5a1b;
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+    animation: bounceIn 0.8s ease;
+  }
+
+  @keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* plant scene */
+  .plant-scene {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin: 20px auto;
+    height: 300px;
+    position: relative;
+  }
+
+  .plant-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* pot */
+  .pot {
+    width: 120px;
+    height: 90px;
+    background: linear-gradient(135deg, #c0622a, #8b3a10);
+    border-radius: 10px 10px 30px 30px;
+    position: relative;
+    box-shadow: 4px 6px 0px rgba(0,0,0,0.2);
+  }
+  .pot::before {
+    content: '';
+    position: absolute;
+    top: -12px; left: -8px;
+    width: 136px; height: 22px;
+    background: linear-gradient(135deg, #d4743a, #a04520);
+    border-radius: 8px;
+  }
+  .pot-soil {
+    position: absolute;
+    top: 5px; left: 10px;
+    width: 100px; height: 20px;
+    background: #5a3010;
+    border-radius: 5px;
+  }
+
+  /* stem */
+  .stem {
+    width: 14px;
+    background: linear-gradient(90deg, #4a8c2a, #5aa030);
+    border-radius: 7px;
+    margin-bottom: 0;
+    transition: height 0.5s ease;
+    position: relative;
+  }
+
+  /* leaves */
+  .leaves {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    transition: all 0.5s ease;
+  }
+
+  .leaf {
+    width: 70px;
+    height: 50px;
+    border-radius: 50% 0 50% 0;
+    position: absolute;
+    transition: all 0.5s ease;
+  }
+  .leaf-left {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    transform-origin: right center;
+    right: 5px;
+    transform: rotate(-20deg);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  }
+  .leaf-right {
+    background: linear-gradient(135deg, #43A047, #55a84e);
+    transform-origin: left center;
+    left: 5px;
+    border-radius: 0 50% 0 50%;
+    transform: rotate(20deg);
+    box-shadow: -2px 2px 5px rgba(0,0,0,0.1);
+  }
+  .leaf-top {
+    background: linear-gradient(135deg, #388E3C, #4CAF50);
+    width: 60px;
+    height: 55px;
+    border-radius: 50% 50% 0 50%;
+    position: relative;
+    top: -10px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  }
+
+  /* flower */
+  .flower {
+    position: absolute;
+    top: -30px;
+    display: none;
+  }
+  .flower-center {
+    width: 20px; height: 20px;
+    background: #FFD700;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+  }
+  .petal {
+    width: 14px; height: 22px;
+    background: #FF6B9D;
+    border-radius: 50%;
+    position: absolute;
+    transform-origin: bottom center;
+  }
+
+  /* emoji effects */
+  .effect {
+    position: absolute;
+    font-size: 1.8rem;
+    animation: floatUp 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-60px) scale(0.5); opacity: 0; }
+  }
+
+  /* status card */
+  .status-card {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 25px;
+    padding: 15px 25px;
+    margin: 10px auto;
+    max-width: 500px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2d5a1b;
+    border: 3px solid rgba(255,255,255,0.9);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+
+  /* sensor cards */
+  .sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+  }
+
+  .sensor-card {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px 15px;
+    text-align: center;
+    border: 3px solid rgba(255,255,255,0.9);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+  }
+  .sensor-card:hover { transform: translateY(-5px); }
+
+  .sensor-icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .sensor-label { font-size: 0.85rem; color: #666; font-weight: 700; text-transform: uppercase; }
+  .sensor-value {
+    font-size: 2rem;
+    font-weight: 900;
+    margin: 5px 0;
+  }
+  .sensor-bar {
+    width: 100%;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .sensor-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.5s ease;
+  }
+
+  .soil-color { color: #8B4513; }
+  .humid-color { color: #1E90FF; }
+  .temp-color { color: #FF4500; }
+
+  /* alert */
+  .alert {
+    background: #FF6B6B;
+    color: white;
+    border-radius: 20px;
+    padding: 15px 25px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 10px auto;
+    max-width: 500px;
+    display: none;
+    animation: shake 0.5s ease;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .last-update {
+    text-align: center;
+    color: #555;
+    font-size: 0.85rem;
+    margin-top: 10px;
+  }
+
+  /* ground */
+  .ground {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: linear-gradient(180deg, #90c45a, #5a8a20);
+    z-index: 0;
+  }
+  .ground::before {
+    content: '';
+    position: absolute;
+    top: -20px; left: 0; right: 0;
+    height: 40px;
+    background: #90c45a;
+    border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+  }
+
+  /* wilting animation */
+  @keyframes wilt {
+    0%,100% { transform: rotate(-20deg); }
+    50% { transform: rotate(-35deg) translateY(5px); }
+  }
+  @keyframes wiltRight {
+    0%,100% { transform: rotate(20deg); }
+    50% { transform: rotate(35deg) translateY(5px); }
+  }
+  .wilting .leaf-left { animation: wilt 2s ease-in-out infinite; }
+  .wilting .leaf-right { animation: wiltRight 2s ease-in-out infinite; }
+
+  /* sway animation */
+  @keyframes sway {
+    0%,100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+  }
+  .happy { animation: sway 2s ease-in-out infinite; }
+
+  @media (max-width: 600px) {
+    .sensor-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sun"></div>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+<div class="ground"></div>
+
+<div class="container">
+  <h1>🌱 Smart Plant Monitor</h1>
+
+  <div class="status-card" id="statusCard">
+    🔄 กำลังโหลดข้อมูล...
+  </div>
+
+  <div class="alert" id="alertBox">
+    💧 ดินแห้งมาก! รดน้ำต้นไม้ด้วยนะ!
+  </div>
+
+  <div class="plant-scene">
+    <div class="plant-container" id="plantContainer">
+      <!-- flower -->
+      <div class="flower" id="flower">
+        <div class="flower-center"></div>
+      </div>
+      <!-- leaves -->
+      <div class="leaves" id="leaves" style="width:80px; height:60px;">
+        <div class="leaf leaf-left" id="leafLeft"></div>
+        <div class="leaf leaf-right" id="leafRight"></div>
+        <div class="leaf leaf-top" id="leafTop"></div>
+      </div>
+      <!-- stem -->
+      <div class="stem" id="stem" style="height: 80px;"></div>
+      <!-- pot -->
+      <div class="pot">
+        <div class="pot-soil" id="potSoil"></div>
+      </div>
+    </div>
+    <!-- effects container -->
+    <div id="effects" style="position:absolute; width:100%; height:100%; pointer-events:none;"></div>
+  </div>
+
+  <div class="sensor-grid">
+    <div class="sensor-card">
+      <div class="sensor-icon">🌱</div>
+      <div class="sensor-label">ความชื้นดิน</div>
+      <div class="sensor-value soil-color" id="soilVal">--%</div>
+      <div class="sensor-bar">
+        <div class="sensor-bar-fill" id="soilBar" style="width:0%; background: linear-gradient(90deg, #8B4513, #D2691E);"></div>
+      </div>
+    </div>
+    <div class="sensor-card">
+      <div class="sensor-icon">💧</div>
+      <div class="sensor-label">ความชื้นอากาศ</div>
+      <div class="sensor-value humid-color" id="humidVal">--%</div>
+      <div class="sensor-bar">
+        <div class="sensor-bar-fill" id="humidBar" style="width:0%; background: linear-gradient(90deg, #1E90FF, #00BFFF);"></div>
+      </div>
+    </div>
+    <div class="sensor-card">
+      <div class="sensor-icon">🌡️</div>
+      <div class="sensor-label">อุณหภูมิ</div>
+      <div class="sensor-value temp-color" id="tempVal">--°C</div>
+      <div class="sensor-bar">
+        <div class="sensor-bar-fill" id="tempBar" style="width:0%; background: linear-gradient(90deg, #FF4500, #FF6347);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="last-update" id="lastUpdate">อัปเดตล่าสุด: --</div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAEDiu-Y-SWh_oX6jNo-45JiH3Vk5VPS_0",
+    authDomain: "dontletmedie.firebaseapp.com",
+    databaseURL: "https://dontletmedie-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "dontletmedie",
+    storageBucket: "dontletmedie.firebasestorage.app",
+    messagingSenderId: "1068945053247",
+    appId: "1:1068945053247:web:933f1ae5dea7d02839ca8a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  let effectInterval = null;
+
+  function updatePlant(soil, humidity, temp) {
+    const leaves = document.getElementById('leaves');
+    const stem = document.getElementById('stem');
+    const statusCard = document.getElementById('statusCard');
+    const alertBox = document.getElementById('alertBox');
+    const potSoil = document.getElementById('potSoil');
+    const flower = document.getElementById('flower');
+    const effects = document.getElementById('effects');
+    const plantContainer = document.getElementById('plantContainer');
+
+    // clear effects
+    if (effectInterval) clearInterval(effectInterval);
+    effects.innerHTML = '';
+    leaves.classList.remove('wilting', 'happy');
+    plantContainer.classList.remove('happy');
+
+    if (soil > 60) {
+      // Happy plant 🌸
+      statusCard.textContent = '😊 ต้นไม้สุขภาพดีมาก! มีความสุขมาก~';
+      statusCard.style.background = 'rgba(200,255,200,0.9)';
+      alertBox.style.display = 'none';
+      leaves.style.filter = 'none';
+      stem.style.background = 'linear-gradient(90deg, #4a8c2a, #5aa030)';
+      potSoil.style.background = '#3a1a05';
+      flower.style.display = 'block';
+      plantContainer.classList.add('happy');
+
+      // water drops effect
+      effectInterval = setInterval(() => {
+        const el = document.createElement('div');
+        el.className = 'effect';
+        el.textContent = ['✨','🌸','⭐','💚'][Math.floor(Math.random()*4)];
+        el.style.left = (30 + Math.random()*40) + '%';
+        el.style.top = (20 + Math.random()*40) + '%';
+        el.style.animationDuration = (1.5 + Math.random()) + 's';
+        effects.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
+      }, 600);
+
+    } else if (soil > 30) {
+      // Normal plant
+      statusCard.textContent = '🌿 ต้นไม้ปกติดี สบายดีครับ~';
+      statusCard.style.background = 'rgba(255,255,255,0.85)';
+      alertBox.style.display = 'none';
+      leaves.style.filter = 'none';
+      flower.style.display = 'none';
+      stem.style.background = 'linear-gradient(90deg, #4a8c2a, #5aa030)';
+      potSoil.style.background = '#4a2a08';
+
+    } else {
+      // Dry / wilting plant 😢
+      statusCard.textContent = '😢 ต้นไม้กระหายน้ำมาก! ช่วยด้วย!';
+      statusCard.style.background = 'rgba(255,220,200,0.9)';
+      alertBox.style.display = 'block';
+      leaves.classList.add('wilting');
+      leaves.style.filter = 'saturate(0.4) brightness(0.8)';
+      flower.style.display = 'none';
+      stem.style.background = 'linear-gradient(90deg, #6b7a2a, #8a9030)';
+      potSoil.style.background = '#7a5a30';
+
+      effectInterval = setInterval(() => {
+        const el = document.createElement('div');
+        el.className = 'effect';
+        el.textContent = ['💦','😰','🥵'][Math.floor(Math.random()*3)];
+        el.style.left = (30 + Math.random()*40) + '%';
+        el.style.top = (20 + Math.random()*40) + '%';
+        el.style.animationDuration = (1.5 + Math.random()) + 's';
+        effects.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
+      }, 800);
+    }
+
+    // hot temperature
+    if (temp > 35) {
+      statusCard.textContent += ' 🔥 ร้อนมากด้วย!';
+      effectInterval = setInterval(() => {
+        const el = document.createElement('div');
+        el.className = 'effect';
+        el.textContent = '🔥';
+        el.style.left = (30 + Math.random()*40) + '%';
+        el.style.top = (10 + Math.random()*30) + '%';
+        effects.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
+      }, 700);
+    }
+  }
+
+  onValue(ref(db, '/plant'), (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+
+    const soil = Math.round(data.soil || 0);
+    const humidity = Math.round(data.humidity || 0);
+    const temp = parseFloat(data.temperature || 0).toFixed(1);
+
+    document.getElementById('soilVal').textContent = soil + '%';
+    document.getElementById('humidVal').textContent = humidity + '%';
+    document.getElementById('tempVal').textContent = temp + '°C';
+
+    document.getElementById('soilBar').style.width = soil + '%';
+    document.getElementById('humidBar').style.width = humidity + '%';
+    document.getElementById('tempBar').style.width = Math.min((temp/50)*100, 100) + '%';
+
+    document.getElementById('lastUpdate').textContent =
+      'อัปเดตล่าสุด: ' + new Date().toLocaleTimeString('th-TH');
+
+    updatePlant(soil, humidity, parseFloat(temp));
+  });
+</script>
+
+</body>
+</html>
